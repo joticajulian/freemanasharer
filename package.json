@@ -1,0 +1,17 @@
+{
+  "name": "freemanasharer",
+  "private": true,
+  "scripts": {
+    "build": "yarn workspace koinos-contract build",
+    "deploy": "yarn workspace koinos-contract deploy",
+    "dev": "yarn workspace website-koinos-contract dev",
+    "keys": "yarn workspace koinos-contract keys",
+    "updateFrontend": "yarn workspace koinos-contract updateFrontend",
+    "setdata": "yarn workspace koinos-contract setdata"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  }
+}

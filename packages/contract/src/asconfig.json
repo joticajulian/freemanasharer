@@ -1,0 +1,26 @@
+{
+  "targets": {
+    "debug": {
+      "outFile": "./build/debug/Freemanasharer.wasm",
+      "textFile": "./build/debug/Freemanasharer.wat",
+      "sourceMap": true,
+      "debug": true
+    },
+    "release": {
+      "outFile": "./build/release/Freemanasharer.wasm",
+      "textFile": "./build/release/Freemanasharer.wat",
+      "sourceMap": true,
+      "optimizeLevel": 3,
+      "shrinkLevel": 0,
+      "converge": false,
+      "noAssert": false
+    }
+  },
+  "options": {
+    "exportStart": "_start",
+    "disable": ["sign-extension", "bulk-memory"],
+    "disableWarning": "235",
+    "lib": [],
+    "use": ["abort="]
+  }
+}
