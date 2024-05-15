@@ -21,5 +21,7 @@ ${mnemonic}
 
 First ${totalAccounts} accounts derived from mnemonic:
 
-${accounts.map((a, i) => `account #${i}\n${JSON.stringify(a, null, 2)}`).join("\n\n")}
+${accounts
+  .map((a, i) => `account #${i}\n${JSON.stringify(a, null, 2)}`)
+  .join("\n\n")}
 `);

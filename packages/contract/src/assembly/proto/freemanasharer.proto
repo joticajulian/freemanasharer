@@ -2,14 +2,10 @@ syntax = "proto3";
 
 package freemanasharer;
 
-import "koinos/options.proto";
-
-message userdata {
-   string name = 1;
-   uint64 value = 2;
-}
-
-message userdata_args {
-   bytes account = 1 [(koinos.btype) = ADDRESS];
-   userdata data = 2;
+message info {
+   uint64 mana = 1 [jstype = JS_STRING];
+   uint64 koin_balance = 2 [jstype = JS_STRING];
+   uint64 koin_reserved = 3 [jstype = JS_STRING];
+   uint64 available_mana = 4 [jstype = JS_STRING];
+   uint64 available_balance = 5 [jstype = JS_STRING];
 }

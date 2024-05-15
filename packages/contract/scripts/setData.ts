@@ -27,11 +27,11 @@ async function main() {
 
   if (!network.accounts.contract.privateKeyWif) {
     throw new Error(
-      `no private key defined for the contract in ${networkName}`,
+      `no private key defined for the contract in ${networkName}`
     );
   }
   const contractAccount = Signer.fromWif(
-    network.accounts.contract.privateKeyWif,
+    network.accounts.contract.privateKeyWif
   );
 
   const contract = new Contract({
@@ -52,11 +52,11 @@ async function main() {
   } else {
     if (!network.accounts.manaSharer.privateKeyWif) {
       throw new Error(
-        `no private key defined for the manaSharer in ${networkName}`,
+        `no private key defined for the manaSharer in ${networkName}`
       );
     }
     const manaSharer = Signer.fromWif(
-      network.accounts.manaSharer.privateKeyWif,
+      network.accounts.manaSharer.privateKeyWif
     );
     manaSharer.provider = provider;
     txOptions = {
@@ -77,13 +77,13 @@ async function main() {
         value: "123",
       },
     },
-    txOptions,
+    txOptions
   );
 
   console.log("Transaction submitted");
   console.log(`Data set for ${signer.address}`);
   console.log(
-    `consumption: ${(Number(receipt!.rc_used) / 1e8).toFixed(2)} mana`,
+    `consumption: ${(Number(receipt!.rc_used) / 1e8).toFixed(2)} mana`
   );
   const { blockNumber } = await transaction!.wait("byBlock", 60000);
   console.log(`mined in block ${blockNumber} (${networkName})`);

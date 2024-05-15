@@ -16,16 +16,16 @@ async function main() {
 
   if (!network.accounts.contract.privateKeyWif) {
     throw new Error(
-      `no private key defined for the contract in ${networkName}`,
+      `no private key defined for the contract in ${networkName}`
     );
   }
   const contractAccount = Signer.fromWif(
-    network.accounts.contract.privateKeyWif,
+    network.accounts.contract.privateKeyWif
   );
 
   const constantsFile = path.join(
     __dirname,
-    "../../website/src/koinos/constants.ts",
+    "../../website/src/koinos/constants.ts"
   );
   if (fs.existsSync(constantsFile)) {
     const data = fs.readFileSync(constantsFile, "utf8");

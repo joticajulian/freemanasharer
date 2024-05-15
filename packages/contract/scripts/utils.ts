@@ -13,7 +13,7 @@ export function getBytecode() {
   const wasmFile = path.join(
     __dirname,
     "../src",
-    asconfig.targets.release.outFile,
+    asconfig.targets.release.outFile
   );
   const bytecode = fs.readFileSync(wasmFile);
   return bytecode;
