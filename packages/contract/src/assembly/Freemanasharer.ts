@@ -9,6 +9,7 @@ const BALANCES_SPACE_ID = 1;
 const PENDING_WITHDRAW_SPACE_ID = 2;
 const RC_LIMIT_SPACE_ID = 3;
 const KOIN_RESERVED_SPACE_ID = 4;
+const RECOMMENDED_MANA_OFFSET_SPACE_ID = 5;
 
 export class Freemanasharer {
   callArgs: System.getArgumentsReturn | null;
@@ -49,6 +50,14 @@ export class Freemanasharer {
   koinReserved: Storage.Obj<token.uint64> = new Storage.Obj(
     this.contractId,
     KOIN_RESERVED_SPACE_ID,
+    token.uint64.decode,
+    token.uint64.encode,
+    () => new token.uint64(0)
+  );
+
+  recommendedManaOffset: Storage.Obj<token.uint64> = new Storage.Obj(
+    this.contractId,
+    RECOMMENDED_MANA_OFFSET_SPACE_ID,
     token.uint64.decode,
     token.uint64.encode,
     () => new token.uint64(0)
@@ -128,12 +137,14 @@ export class Freemanasharer {
       new token.balance_of_args(this.contractId)
     ).value;
     const availableBalance = koinBalance - koinReserved;
+    const recommendedManaOffset = this.recommendedManaOffset.get()!.value;
     return new freemanasharer.info(
       mana,
       koinBalance,
       koinReserved,
       availableMana,
-      availableBalance
+      availableBalance,
+      recommendedManaOffset,
     );
   }
 
@@ -173,6 +184,21 @@ export class Freemanasharer {
   }
 
   /**
+   * Set recommended mana offset
+   * @external
+   */
+  set_recommended_mana_offset(args: token.uint64): void {
+    const owner = this.owner.get();
+    System.require(owner, "no owner defined");
+    const isAuthorized = System.checkAuthority(
+      authority.authorization_type.contract_call,
+      owner!.value!
+    );
+    System.require(isAuthorized, "not authorized by the owner");
+    this.recommendedManaOffset.put(args);
+  }
+
+  /**
    * Set owner
    * @external
    */
@@ -195,6 +221,7 @@ export class Freemanasharer {
   /**
    * Deposit KOIN
    * @external
+   * @event deposit token.mint_args
    */
   deposit(args: token.mint_args): void {
     const owner = this.owner.get();
@@ -209,7 +236,7 @@ export class Freemanasharer {
 
     const impacted = [args.to!];
     System.event(
-      "token.mint_event",
+      "deposit",
       Protobuf.encode<token.mint_args>(args, token.mint_args.encode),
       impacted
     );
@@ -235,8 +262,9 @@ export class Freemanasharer {
     // update pending (remove the previous value and set new one)
     const pendingWithdraw = this.pendingWithdraw.get(args.to!)!;
     const koinReserved = this.koinReserved.get()!;
-    pendingWithdraw.value += args.value - pendingWithdraw.value;
-    koinReserved.value += args.value - pendingWithdraw.value;
+    const deltaPendingWithdraw = args.value - pendingWithdraw.value;
+    koinReserved.value += deltaPendingWithdraw;
+    pendingWithdraw.value += deltaPendingWithdraw;
 
     // save data
     this.pendingWithdraw.put(args.to!, pendingWithdraw);
@@ -252,6 +280,7 @@ export class Freemanasharer {
   /**
    * Withdraw KOIN
    * @external
+   * @event withdraw token.mint_args
    */
   withdraw(args: token.mint_args): void {
     const isAuthorized = System.checkAuthority(
@@ -283,5 +312,11 @@ export class Freemanasharer {
     // save data
     this.pendingWithdraw.put(args.to!, pendingWithdraw);
     this.koinReserved.put(koinReserved);
+
+    System.event(
+      "withdraw",
+      Protobuf.encode<token.mint_args>(args, token.mint_args.encode),
+      [args.to!]
+    );
   }
 }

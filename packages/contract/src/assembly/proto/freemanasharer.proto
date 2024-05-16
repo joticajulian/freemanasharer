@@ -8,4 +8,5 @@ message info {
    uint64 koin_reserved = 3 [jstype = JS_STRING];
    uint64 available_mana = 4 [jstype = JS_STRING];
    uint64 available_balance = 5 [jstype = JS_STRING];
+   uint64 recommended_mana_offset = 6 [jstype = JS_STRING];
 }

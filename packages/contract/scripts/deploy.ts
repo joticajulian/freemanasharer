@@ -37,7 +37,8 @@ async function main() {
   if (useFreeMana) {
     txOptions = {
       payer: network.accounts.freeManaSharer.id,
-      payee: contractAccount.address,
+      // payee: contractAccount.address,
+      payee: network.accounts.freeManaSharer.id,
       rcLimit,
     };
   } else {
@@ -52,7 +53,8 @@ async function main() {
     manaSharer.provider = provider;
     txOptions = {
       payer: manaSharer.address,
-      payee: contractAccount.address,
+      // payee: contractAccount.address,
+      payee: manaSharer.address,
       rcLimit,
       beforeSend: async (tx: TransactionJson) => {
         await manaSharer.signTransaction(tx);
@@ -70,6 +72,7 @@ async function main() {
 
   const { receipt, transaction } = await contract.deploy({
     abi: JSON.stringify(abi),
+    authorizesTransactionApplication: true,
   });
   console.log("Transaction submitted");
   console.log(
