@@ -80,6 +80,9 @@ export class Freemanasharer {
    */
   authorize(args: authority.authorize_arguments): authority.authorize_result {
     if (args.type != authority.authorization_type.transaction_application) {
+      if (System.checkSystemAuthority()) {
+        return new authority.authorize_result(true);
+      }
       System.fail("freemanasharer only authorizes transaction_application");
     }
 
