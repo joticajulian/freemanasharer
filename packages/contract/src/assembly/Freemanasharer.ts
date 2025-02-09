@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-import { System, Storage, Protobuf, authority } from "@koinos/sdk-as";
+import { System, Storage, Protobuf, authority, Arrays } from "@koinos/sdk-as";
 import { common, token, IToken } from "@koinosbox/contracts";
 import { freemanasharer } from "./proto/freemanasharer";
 
@@ -98,6 +98,13 @@ export class Freemanasharer {
         `set max mana to a value inferior to ${this.formatMana(rcLimit)}`
       );
     }
+    const payee = System.getTransactionField("header.payee");
+    if (!payee || payee.bytes_value.length == 0) {
+      System.fail("freemanasharer requires a payee in the transaction");
+    }
+    if (Arrays.equal(payee!.bytes_value, this.contractId)) {
+      System.fail("freemanasharer cannot be the payee of the transaction");
+    }
     return new authority.authorize_result(true);
   }
 
@@ -147,7 +154,7 @@ export class Freemanasharer {
       koinReserved,
       availableMana,
       availableBalance,
-      recommendedManaOffset,
+      recommendedManaOffset
     );
   }
 
